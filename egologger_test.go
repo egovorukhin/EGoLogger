@@ -18,6 +18,7 @@ func Test(t *testing.T) {
 
 	logPhones := New(nil, "phones").SetFileSize(1).SetLogPath("dir", true)
 	logPhones.Info("телефон")
+	logPhones.Error("телефон")
 
 	log := New(Test, "phones")
 	log.Error("Ошибка информации")
