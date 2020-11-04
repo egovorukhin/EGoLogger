@@ -1,9 +1,9 @@
-package main
+package egologger
 
 import (
 	"errors"
 	"fmt"
-	"github.com/egovorukhin/egologger/logger"
+	"testing"
 )
 
 type Main struct{}
@@ -12,14 +12,14 @@ func (m Main) GetError(text string) error {
 	return errors.New(text)
 }
 
-func main() {
+func Test(t *testing.T) {
 
 	fmt.Println("Старт")
 
-	logPhones := logger.New(main, "phones").SetFileSize(1).SetLogPath("dir", true)
+	logPhones := New(nil, "phones").SetFileSize(1).SetLogPath("dir", true)
 	logPhones.Info("телефон")
 
-	log := logger.New(main, "phones")
+	log := New(Test, "phones")
 	log.Error("Ошибка информации")
 	log.Info("Старт")
 	m := Main{}
