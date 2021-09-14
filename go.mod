@@ -1,3 +1,3 @@
-module github.com/egovorukhin/egologger/v2
+module github.com/egovorukhin/egologger
 
 go 1.16
