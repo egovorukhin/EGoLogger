@@ -11,4 +11,4 @@ Logger for golang projects
 #### Использование (Usage)
 >logPhones := New(nil, "phones").SetFileSize(1).SetLogPath("dir", true)\
 >logPhones.Info("phone")\
->logPhones.Error("phone")\
+>logPhones.Error("phone")
