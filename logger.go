@@ -16,6 +16,7 @@ type Logger struct {
 	buf      bytes.Buffer
 	fileSize int
 	filePath string
+	system   string
 }
 
 func New(funcName interface{}, filename string) Logger {
@@ -38,16 +39,17 @@ func New(funcName interface{}, filename string) Logger {
 		fileName: filename,
 		filePath: fPath,
 		fileSize: 10,
+		system:   runtime.GOOS,
 	}
 }
 
-//Устанавливаем размер файлов
+// SetFileSize Устанавливаем размер файлов
 func (l Logger) SetFileSize(filesize int) Logger {
 	l.fileSize = filesize
 	return l
 }
 
-//Кастомный путь
+// SetLogPath Кастомный путь
 func (l Logger) SetLogPath(path string, isAddPath bool) Logger {
 	if isAddPath {
 		l.filePath = filepath.Join(l.filePath, path)
@@ -57,38 +59,53 @@ func (l Logger) SetLogPath(path string, isAddPath bool) Logger {
 	return l
 }
 
-func (logger Logger) Info(message interface{}) {
+// Info Пишем префикс - "Info"
+func (l Logger) Info(message interface{}) {
 
-	l := log.New(&logger.buf, fmt.Sprintf("Info: %s - ", logger.funcName), log.LstdFlags|log.Lmicroseconds|log.Lmsgprefix)
-	err := l.Output(2, fmt.Sprint(message))
-	if err != nil {
-		log.Fatal(err)
+	if l.system == "windows" {
+		logger := log.New(&l.buf, fmt.Sprintf("Info: %s - ", l.funcName), log.LstdFlags|log.Lmicroseconds|log.Lmsgprefix)
+		err := logger.Output(2, fmt.Sprint(message))
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = l.save()
+		if err != nil {
+			log.Fatal(err)
+		}
+		return
 	}
-	err = logger.save()
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	// linux
+	log.Println(message)
 }
 
+// Info Пишем префикс - "Info"
 func Info(funcName interface{}, filename string, message interface{}) {
 	New(funcName, filename).Info(message)
 }
 
-func (logger Logger) Error(message interface{}) {
+// Error Пишем префикс - "Error"
+func (l Logger) Error(message interface{}) {
 
 	if message == nil {
 		return
 	}
 
-	l := log.New(&logger.buf, fmt.Sprintf("Error: %s - ", logger.funcName), log.LstdFlags|log.Lmicroseconds|log.Lmsgprefix|log.Llongfile)
-	err := l.Output(2, fmt.Sprint(message))
-	if err != nil {
-		log.Fatal(err)
+	if l.system == "windows" {
+		logger := log.New(&l.buf, fmt.Sprintf("Error: %s - ", l.funcName), log.LstdFlags|log.Lmicroseconds|log.Lmsgprefix|log.Llongfile)
+		err := logger.Output(2, fmt.Sprint(message))
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = l.save()
+		if err != nil {
+			log.Fatal(err)
+		}
+		return
 	}
-	err = logger.save()
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	// linux
+	log.Println(message)
 }
 
 func Error(funcName interface{}, filename string, message interface{}) {
